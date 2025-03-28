@@ -1,0 +1,157 @@
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #4a5568;
+}
+
+.close-button:hover {
+  color: #2d3748;
+}
+
+/* Auth form styles */
+.auth-form {
+  margin-top: 1rem;
+}
+
+.auth-form h2 {
+  text-align: center;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #4299e1;
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.auth-submit:hover {
+  background-color: #3182ce;
+}
+
+.auth-error {
+  color: #e53e3e;
+  background-color: #fff5f5;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 1rem;
+  color: #4a5568;
+}
+
+.switch-button {
+  background: none;
+  border: none;
+  color: #4299e1;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+.switch-button:hover {
+  text-decoration: underline;
+}
+
+/* Favorites styles */
+.favorites-list {
+  margin-top: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.favorite-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
+}
+
+.favorite-city-button {
+  flex: 1;
+  text-align: left;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #2d3748;
+}
+
+.favorite-city-button:hover {
+  color: #4299e1;
+}
+
+.remove-favorite {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  color: #e53e3e;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.remove-favorite:hover {
+  color: #c53030;
+}
+
+.no-favorites {
+  text-align: center;
+  color: #718096;
+  padding: 1rem;
+}
