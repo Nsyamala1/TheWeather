@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloudSun, faSearch, faSpinner, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faCloudSun, faSearch, faSpinner, faHeart, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import WindWarning from './WindWarning';
 import RainStatus from './RainStatus';
 import LocalTime from './LocalTime';
@@ -18,6 +18,7 @@ import '../styles/WeatherInfo.css';
 const celsiusToFahrenheit = (celsius) => (celsius * 9/5) + 32;
 
 const WeatherApp = () => {
+  const [locationLoading, setLocationLoading] = useState(false);
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
   const [forecastData, setForecastData] = useState(null);
@@ -27,6 +28,53 @@ const WeatherApp = () => {
   const [showFavorites, setShowFavorites] = useState(false);
   const [user, setUser] = useState(null);
   const [isCelsius, setIsCelsius] = useState(true);
+
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser');
+      return;
+    }
+
+    setLocationLoading(true);
+    setError('');
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const response = await weatherService.getCurrentWeather({ lat: latitude, lon: longitude });
+          
+          // Set the city name from the API response
+          setCity(response.city);
+          
+          const weatherData = {
+            ...response,
+            temp: isCelsius ? response.temperature : celsiusToFahrenheit(response.temperature),
+            feelsLike: isCelsius ? response.feelsLike : celsiusToFahrenheit(response.feelsLike),
+            tempC: response.temperature,
+            tempF: celsiusToFahrenheit(response.temperature),
+            feelsLikeC: response.feelsLike,
+            feelsLikeF: celsiusToFahrenheit(response.feelsLike)
+          };
+
+          // Fetch forecast data
+          const forecast = await weatherService.getForecast({ lat: latitude, lon: longitude });
+          setForecastData(forecast);
+
+          setWeather(weatherData);
+          updateWeatherBackground(response.condition);
+        } catch (err) {
+          setError('Failed to fetch weather data for your location');
+        } finally {
+          setLocationLoading(false);
+        }
+      },
+      (error) => {
+        setError('Unable to retrieve your location. ' + error.message);
+        setLocationLoading(false);
+      }
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -156,6 +204,20 @@ const WeatherApp = () => {
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
                 <><FontAwesomeIcon icon={faSearch} /> Get Weather</>
+              )}
+            </button>
+            <button 
+              type="button" 
+              className="location-button" 
+              onClick={getCurrentLocation}
+              disabled={locationLoading}
+            >
+              {locationLoading ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faLocationCrosshairs} /> Use My Location
+                </>
               )}
             </button>
           </div>

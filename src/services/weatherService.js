@@ -6,17 +6,35 @@ const WEATHER_URL = 'https://api.openweathermap.org/data/2.5';
 
 export const weatherService = {
     getCurrentWeather: async (location) => {
+        let lat, lon, cityName;
+
         try {
-            console.log('Using API Key:', API_KEY);
-            const geoUrl = `${GEO_URL}/direct?q=${encodeURIComponent(location)}&limit=5&appid=${API_KEY}`;
-            console.log('Geocoding URL:', geoUrl);
-            const geoResponse = await axios.get(geoUrl);
+            // Handle location input as either string (city name) or coordinates
+            if (typeof location === 'string') {
+                // Get coordinates from city name
+                const geoUrl = `${GEO_URL}/direct?q=${encodeURIComponent(location)}&limit=5&appid=${API_KEY}`;
+                const geoResponse = await axios.get(geoUrl);
 
-            if (!geoResponse.data.length) {
-                throw new Error('Location not found');
+                if (!geoResponse.data.length) {
+                    throw new Error('Location not found');
+                }
+
+                const { lat: latitude, lon: longitude, name } = geoResponse.data[0];
+                lat = latitude;
+                lon = longitude;
+                cityName = name;
+            } else if (typeof location === 'object' && location.lat && location.lon) {
+                // Use provided coordinates
+                lat = location.lat;
+                lon = location.lon;
+                
+                // Get city name from reverse geocoding
+                const reverseGeoUrl = `${GEO_URL}/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`;
+                const reverseGeoResponse = await axios.get(reverseGeoUrl);
+                cityName = reverseGeoResponse.data[0]?.name || 'Unknown Location';
+            } else {
+                throw new Error('Invalid location format');
             }
-
-            const { lat, lon, name: cityName } = geoResponse.data[0];
 
             // Get weather data using coordinates
             const response = await axios.get(`${WEATHER_URL}/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
@@ -39,51 +57,63 @@ export const weatherService = {
             };
         } catch (error) {
             console.error('Weather API Error:', error.response?.data || error.message);
-            throw new Error(error.response?.data?.message || 'Failed to fetch weather data');
+            throw error;
         }
     },
 
     getForecast: async (location, days = 7) => {
         try {
-            // First get coordinates for the location
-            const geoUrl = `${GEO_URL}/direct?q=${encodeURIComponent(location)}&limit=5&appid=${API_KEY}`;
-            const geoResponse = await axios.get(geoUrl);
+            let lat, lon;
 
-            if (!geoResponse.data.length) {
-                throw new Error('Location not found');
+            // Handle location input as either string (city name) or coordinates
+            if (typeof location === 'string') {
+                const geoUrl = `${GEO_URL}/direct?q=${encodeURIComponent(location)}&limit=5&appid=${API_KEY}`;
+                const geoResponse = await axios.get(geoUrl);
+
+                if (!geoResponse.data.length) {
+                    throw new Error('Location not found');
+                }
+
+                const { lat: latitude, lon: longitude } = geoResponse.data[0];
+                lat = latitude;
+                lon = longitude;
+            } else if (typeof location === 'object' && location.lat && location.lon) {
+                lat = location.lat;
+                lon = location.lon;
+            } else {
+                throw new Error('Invalid location format');
             }
 
-            const { lat, lon } = geoResponse.data[0];
-
-            // Get weather data using coordinates
+            // Get forecast data using coordinates
             const response = await axios.get(`${WEATHER_URL}/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&cnt=${days * 8}`);
-            
-            // Group forecast data by day
-            const dailyForecasts = response.data.list.reduce((acc, forecast) => {
-                const date = new Date(forecast.dt * 1000).toLocaleDateString();
+
+            // Process forecast data
+            const processedData = response.data.list.reduce((acc, item) => {
+                const date = new Date(item.dt * 1000).toISOString().split('T')[0];
                 if (!acc[date]) {
                     acc[date] = {
+                        date,
                         temps: [],
                         conditions: [],
                         humidity: [],
                         windSpeed: [],
-                        icons: [],
-                        date: new Date(forecast.dt * 1000)
+                        icons: []
                     };
                 }
-                acc[date].temps.push(forecast.main.temp);
-                acc[date].conditions.push(forecast.weather[0].main);
-                acc[date].humidity.push(forecast.main.humidity);
-                acc[date].windSpeed.push(forecast.wind.speed);
-                acc[date].icons.push(forecast.weather[0].icon);
+
+                acc[date].temps.push(item.main.temp);
+                acc[date].conditions.push(item.weather[0].main);
+                acc[date].humidity.push(item.main.humidity);
+                acc[date].windSpeed.push(item.wind.speed);
+                acc[date].icons.push(item.weather[0].icon);
+
                 return acc;
             }, {});
 
-            return Object.values(dailyForecasts).map(day => ({
+            // Calculate daily averages
+            return Object.values(processedData).map(day => ({
                 date: day.date,
-                temperature: day.temps.reduce((a, b) => a + b) / day.temps.length,
-                tempMax: Math.max(...day.temps),
-                tempMin: Math.min(...day.temps),
+                temp: day.temps.reduce((a, b) => a + b) / day.temps.length,
                 condition: day.conditions[Math.floor(day.conditions.length / 2)],
                 humidity: day.humidity.reduce((a, b) => a + b) / day.humidity.length,
                 windSpeed: day.windSpeed.reduce((a, b) => a + b) / day.windSpeed.length,
@@ -91,7 +121,7 @@ export const weatherService = {
             }));
         } catch (error) {
             console.error('Weather API Error:', error);
-            throw new Error('Failed to fetch forecast data');
+            throw error;
         }
     }
 };
