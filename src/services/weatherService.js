@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const API_KEY = process.env.REACT_APP_OPENWEATHER_API_KEY;
-const GEO_URL = 'http://api.openweathermap.org/geo/1.0';
-const WEATHER_URL = 'http://api.openweathermap.org/data/2.5';
+const GEO_URL = 'https://api.openweathermap.org/geo/1.0';
+const WEATHER_URL = 'https://api.openweathermap.org/data/2.5';
 
 export const weatherService = {
     getCurrentWeather: async (location) => {
@@ -35,7 +35,7 @@ export const weatherService = {
                 cloudCover: response.data.clouds.all,
                 datetime: response.data.dt,
                 timezone: response.data.timezone, // Timezone offset in seconds from UTC
-                icon: `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`
+                icon: `https://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`
             };
         } catch (error) {
             console.error('Weather API Error:', error.response?.data || error.message);
@@ -87,7 +87,7 @@ export const weatherService = {
                 condition: day.conditions[Math.floor(day.conditions.length / 2)],
                 humidity: day.humidity.reduce((a, b) => a + b) / day.humidity.length,
                 windSpeed: day.windSpeed.reduce((a, b) => a + b) / day.windSpeed.length,
-                icon: `http://openweathermap.org/img/wn/${day.icons[Math.floor(day.icons.length / 2)]}@2x.png`
+                icon: `https://openweathermap.org/img/wn/${day.icons[Math.floor(day.icons.length / 2)]}@2x.png`
             }));
         } catch (error) {
             console.error('Weather API Error:', error);
