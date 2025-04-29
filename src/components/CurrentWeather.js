@@ -8,74 +8,77 @@ import {
   faInfoCircle, 
   faMapMarkerAlt 
 } from '@fortawesome/free-solid-svg-icons';
+import '../styles/Weather.css';
 
-const CurrentWeather = ({ weather }) => {
+const CurrentWeather = ({ weather, unit }) => {
   if (!weather) return null;
 
   const {
-    temp,
-    humidity,
+    temperature,
     condition,
+    humidity,
     windSpeed,
     description,
+    feelsLike,
+    uvIndex,
+    visibility,
+    cloudCover,
+    datetime,
     city
   } = weather;
 
   return (
-    <div className="weather-cards">
-      <div className="section-title">
-        <FontAwesomeIcon icon={faMapMarkerAlt} className="location-icon" />
-        <h2>Current Weather</h2>
-      </div>
+    <div className="weather-card">
+      <div className="weather-info">
+        <div className="location-row">
+          <div className="location">
+            <FontAwesomeIcon icon={faMapMarkerAlt} />
+            <span>Location: {city}</span>
+          </div>
+        </div>
 
-      <div className="cards-grid">
-        <div className="weather-card">
-          <div className="card-icon">
+        <div className="main-temp">
+          <div className="temperature">
             <FontAwesomeIcon icon={faThermometerHalf} />
+            <span>Temperature: {temperature.toFixed(1)}{unit}</span>
           </div>
-          <div className="card-content">
-            <h3>Temperature</h3>
-            <div className="card-value">{temp}°F</div>
-          </div>
-        </div>
-
-        <div className="weather-card">
-          <div className="card-icon">
-            <FontAwesomeIcon icon={faTint} />
-          </div>
-          <div className="card-content">
-            <h3>Humidity</h3>
-            <div className="card-value">{humidity}%</div>
+          <div className="feels-like">
+            <FontAwesomeIcon icon={faThermometerHalf} />
+            <span>Feels Like: {feelsLike.toFixed(1)}{unit}</span>
           </div>
         </div>
 
-        <div className="weather-card">
-          <div className="card-icon">
+        <div className="weather-details">
+          <div className="condition">
             <FontAwesomeIcon icon={faCloud} />
+            <span>Condition: {condition}</span>
           </div>
-          <div className="card-content">
-            <h3>Condition</h3>
-            <div className="card-value">{condition}</div>
+          <div className="humidity">
+            <FontAwesomeIcon icon={faTint} />
+            <span>Humidity: {humidity}%</span>
           </div>
-        </div>
-
-        <div className="weather-card">
-          <div className="card-icon">
+          <div className="wind-speed">
             <FontAwesomeIcon icon={faWind} />
+            <span>Wind Speed: {windSpeed} km/h</span>
           </div>
-          <div className="card-content">
-            <h3>Wind Speed</h3>
-            <div className="card-value">{windSpeed} mph</div>
+          <div className="visibility">
+            <FontAwesomeIcon icon={faInfoCircle} />
+            <span>Visibility: {visibility} km</span>
+          </div>
+          <div className="cloud-cover">
+            <FontAwesomeIcon icon={faCloud} />
+            <span>Cloud Cover: {cloudCover}%</span>
           </div>
         </div>
 
-        <div className="weather-card description-card">
-          <div className="card-icon">
+        <div className="footer">
+          <div className="description">
             <FontAwesomeIcon icon={faInfoCircle} />
+            <span>Description: {description}</span>
           </div>
-          <div className="card-content">
-            <h3>Description</h3>
-            <div className="card-value">{description}</div>
+          <div className="last-updated">
+            <FontAwesomeIcon icon={faInfoCircle} />
+            <span>Last Updated: {new Date(datetime).toLocaleString()}</span>
           </div>
         </div>
       </div>

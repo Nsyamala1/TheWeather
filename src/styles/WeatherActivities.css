@@ -1,0 +1,72 @@
+.weather-activities {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  margin: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.activities-title {
+  font-size: 1.5rem;
+  color: #4a5568;
+  margin-bottom: 20px;
+}
+
+.activities-title svg {
+  color: #f6ad55;
+  margin-right: 8px;
+}
+
+.suggestions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.activities-section,
+.attire-section {
+  flex: 1;
+}
+
+.activities-section h3,
+.attire-section h3 {
+  font-size: 1.2rem;
+  color: #4a5568;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: #f7fafc;
+  transition: transform 0.2s;
+}
+
+.suggestion-item:hover {
+  transform: translateX(8px);
+  background-color: #edf2f7;
+}
+
+.suggestion-item svg {
+  width: 20px;
+  height: 20px;
+  color: #4299e1;
+}
+
+.suggestion-item span {
+  color: #4a5568;
+  font-size: 0.95rem;
+}

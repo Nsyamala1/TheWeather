@@ -1,0 +1,24 @@
+.weather-info {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.weather-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.weather-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .weather-info {
+    grid-template-columns: 1fr;
+  }
+}

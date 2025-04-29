@@ -1,0 +1,64 @@
+.rain-status {
+  background-color: #e3f2fd;
+  border-left: 4px solid #1976d2;
+  border-radius: 4px;
+  padding: 1rem;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: flex-start;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rain-status.is-raining {
+  background-color: #e8eaf6;
+  border-left-color: #3f51b5;
+}
+
+.rain-status.no-rain {
+  background-color: #f1f8e9;
+  border-left-color: #689f38;
+}
+
+.rain-icon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  margin-top: 0.25rem;
+}
+
+.is-raining .rain-icon {
+  color: #3f51b5;
+}
+
+.no-rain .rain-icon {
+  color: #689f38;
+}
+
+.rain-content {
+  flex: 1;
+}
+
+.rain-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #1976d2;
+}
+
+.is-raining .rain-content h3 {
+  color: #3f51b5;
+}
+
+.no-rain .rain-content h3 {
+  color: #689f38;
+}
+
+.rain-message {
+  margin: 0.5rem 0;
+  color: #424242;
+  font-weight: 500;
+}
+
+.rain-advice {
+  margin: 0.5rem 0 0 0;
+  color: #616161;
+  font-size: 0.9rem;
+}

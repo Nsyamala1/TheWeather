@@ -1,0 +1,73 @@
+.local-time {
+  background-color: #fff8e1;
+  border-left: 4px solid #ffa000;
+  border-radius: 4px;
+  padding: 1rem;
+  margin: 1rem 0;
+  display: flex;
+  align-items: flex-start;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.local-time.day-time {
+  background-color: #e3f2fd;
+  border-left-color: #1976d2;
+}
+
+.local-time.night-time {
+  background-color: #e8eaf6;
+  border-left-color: #3f51b5;
+}
+
+.time-icon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  margin-top: 0.25rem;
+  color: #ffa000;
+}
+
+.day-time .time-icon {
+  color: #1976d2;
+}
+
+.night-time .time-icon {
+  color: #3f51b5;
+}
+
+.time-content {
+  flex: 1;
+}
+
+.time-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #ffa000;
+}
+
+.day-time .time-content h3 {
+  color: #1976d2;
+}
+
+.night-time .time-content h3 {
+  color: #3f51b5;
+}
+
+.time-display {
+  margin: 0.5rem 0;
+  color: #424242;
+  font-size: 1.2rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.period-icon {
+  font-size: 1rem;
+}
+
+.time-period {
+  margin: 0.25rem 0 0 0;
+  color: #616161;
+  font-size: 0.9rem;
+}

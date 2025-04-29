@@ -23,7 +23,7 @@ ChartJS.register(
   Filler
 );
 
-const WeatherChart = ({ data }) => {
+const WeatherChart = ({ data, forecastData, unit }) => {
   const commonOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -71,23 +71,45 @@ const WeatherChart = ({ data }) => {
     },
   };
 
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
   const temperatureData = {
-    labels: data.history?.map(h => h.time) || [],
-    datasets: [{
-      label: 'Temperature (°F)',
-      data: data.history?.map(h => h.temp) || [],
-      borderColor: '#2563eb',
-      backgroundColor: 'rgba(37, 99, 235, 0.1)',
-      fill: true,
-      tension: 0.4,
-    }],
+    labels: forecastData?.map(f => formatDate(f.date)) || [],
+    datasets: [
+      {
+        label: `Max Temperature (${unit})`,
+        data: forecastData?.map(f => unit === '°F' ? f.tempMax * 9/5 + 32 : f.tempMax) || [],
+        borderColor: '#dc2626',
+        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+        fill: false,
+        tension: 0.4,
+      },
+      {
+        label: `Average Temperature (${unit})`,
+        data: forecastData?.map(f => unit === '°F' ? f.temperature * 9/5 + 32 : f.temperature) || [],
+        borderColor: '#2563eb',
+        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+        fill: true,
+        tension: 0.4,
+      },
+      {
+        label: `Min Temperature (${unit})`,
+        data: forecastData?.map(f => unit === '°F' ? f.tempMin * 9/5 + 32 : f.tempMin) || [],
+        borderColor: '#0891b2',
+        backgroundColor: 'rgba(8, 145, 178, 0.1)',
+        fill: false,
+        tension: 0.4,
+      }
+    ],
   };
 
   const humidityData = {
-    labels: data.history?.map(h => h.time) || [],
+    labels: forecastData?.map(f => formatDate(f.date)) || [],
     datasets: [{
       label: 'Humidity (%)',
-      data: data.history?.map(h => h.humidity) || [],
+      data: forecastData?.map(f => f.humidity) || [],
       borderColor: '#10b981',
       backgroundColor: 'rgba(16, 185, 129, 0.1)',
       fill: true,

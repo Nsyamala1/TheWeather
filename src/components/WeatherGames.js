@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThermometerHalf } from '@fortawesome/free-solid-svg-icons';
+import { faThermometerHalf, faGamepad } from '@fortawesome/free-solid-svg-icons';
+import '../styles/WeatherGames.css';
 
 const WeatherGames = ({ weather }) => {
   const [guess, setGuess] = useState('');
@@ -40,37 +41,31 @@ const WeatherGames = ({ weather }) => {
   };
 
   return (
-    <section className="weather-games">
-      <h2>Weather Games</h2>
-      <div className="games-grid">
-        <div className="game-card temperature">
-          <h3><FontAwesomeIcon icon={faThermometerHalf} /> Temperature Challenge</h3>
-          <p>Guess the current temperature!</p>
-          
-          <form onSubmit={handleGuess} className="game-form">
-            <input
-              type="number"
-              value={guess}
-              onChange={(e) => setGuess(e.target.value)}
-              placeholder="Enter temperature in °F"
-              className="game-input"
-              step="0.1"
-            />
-            <button type="submit" className="game-button">Submit Guess</button>
-          </form>
-          
-          {feedback && (
-            <div className="game-feedback">
-              {feedback}
-            </div>
-          )}
-          
-          <div className="game-score">
-            Score: {score}
-          </div>
+    <div className="weather-games">
+      <h2 className="game-title">
+        <FontAwesomeIcon icon={faGamepad} /> Temperature Guessing Game
+      </h2>
+      <form onSubmit={handleGuess} className="game-form">
+        <input
+          type="number"
+          value={guess}
+          onChange={(e) => setGuess(e.target.value)}
+          placeholder="Guess the temperature"
+          className="game-input"
+        />
+        <button type="submit" className="game-button">
+          <FontAwesomeIcon icon={faThermometerHalf} /> Guess
+        </button>
+      </form>
+      {feedback && (
+        <div className={`feedback ${score > 0 ? 'success' : 'error'}`}>
+          {feedback}
         </div>
+      )}
+      <div className="score">
+        <FontAwesomeIcon icon={faGamepad} /> Score: {score}
       </div>
-    </section>
+    </div>
   );
 };
 
