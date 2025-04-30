@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.weatherapp.ios',
+  appId: 'com.naveensyamala.weatherapp',
   appName: 'Weather App',
   webDir: 'build',
   server: {
