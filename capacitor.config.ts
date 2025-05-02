@@ -8,9 +8,17 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
     cleartext: true
   },
+  plugins: {
+    Geolocation: {
+      ios: {
+        requestAlwaysAuthorization: true
+      }
+    }
+  },
   ios: {
-    scheme: 'App',
-    backgroundColor: '#f7fafc',
+    contentInset: 'always',
+    scheme: 'ai-weather',
+    backgroundColor: '#87CEEB',
     limitsNavigationsToAppBoundDomains: true,
     scrollEnabled: true,
     allowsLinkPreview: false,

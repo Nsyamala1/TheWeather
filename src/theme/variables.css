@@ -1,0 +1,77 @@
+/* Ionic Variables and Theming */
+:root {
+  /* Safe Area Variables */
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  --safe-area-inset-left: env(safe-area-inset-left);
+  --safe-area-inset-right: env(safe-area-inset-right);
+  
+  /* App Height considering safe areas */
+  --app-height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+
+  --ion-background-color: linear-gradient(180deg, #87CEEB, #4682B4);
+  --ion-background-color-rgb: 135, 206, 235;
+  
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+  
+  --ion-card-background: rgba(255, 255, 255, 0.15);
+  --ion-item-background: rgba(255, 255, 255, 0.15);
+  
+  --ion-toolbar-background: transparent;
+  --ion-toolbar-color: #ffffff;
+  
+  --ion-tab-bar-background: rgba(255, 255, 255, 0.15);
+  --ion-tab-bar-color: rgba(255, 255, 255, 0.6);
+  --ion-tab-bar-color-selected: #ffffff;
+  
+  /* Custom Weather App Variables */
+  --weather-card-blur: 10px;
+  --weather-card-border: 1px solid rgba(255, 255, 255, 0.2);
+  --weather-text-primary: #ffffff;
+  --weather-text-secondary: rgba(255, 255, 255, 0.7);
+  --weather-gradient-start: #87CEEB;
+  --weather-gradient-end: #4682B4;
+
+  /* Enable smooth scrolling */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+
+  /* Better touch interactions */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+
+  /* Smoother animations */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /** primary **/
+  --ion-color-primary: #3880ff;
+  --ion-color-primary-rgb: 56, 128, 255;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #3171e0;
+  --ion-color-primary-tint: #4c8dff;
+
+  /** secondary **/
+  --ion-color-secondary: #3dc2ff;
+  --ion-color-secondary-rgb: 61, 194, 255;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #36abe0;
+  --ion-color-secondary-tint: #50c8ff;
+
+  /** light **/
+  --ion-color-light: #f4f5f8;
+  --ion-color-light-rgb: 244, 245, 248;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #d7d8da;
+  --ion-color-light-tint: #f5f6f9;
+
+  /** dark **/
+  --ion-background-color: #f7fafc;
+  --ion-background-color-rgb: 247, 250, 252;
+  --ion-text-color: #2d3748;
+  --ion-text-color-rgb: 45, 55, 72;
+}

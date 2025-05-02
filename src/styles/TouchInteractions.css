@@ -1,0 +1,84 @@
+/* Touch-friendly styles */
+ion-content {
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+}
+
+ion-card {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+ion-card:active {
+  -webkit-transform: scale(0.98);
+  transform: scale(0.98);
+}
+
+ion-button {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  will-change: transform;
+  -webkit-transition: transform 0.15s ease-out;
+  transition: transform 0.15s ease-out;
+}
+
+ion-button:active {
+  -webkit-transform: scale(0.95);
+  transform: scale(0.95);
+}
+
+ion-searchbar {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.weather-chart {
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-x pinch-zoom;
+}
+
+.weather-activities, .weather-games {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+
+.weather-activity-card, .weather-game-card {
+  scroll-snap-align: start;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-transition: transform 0.2s ease;
+  transition: transform 0.2s ease;
+}
+
+.weather-activity-card:active, .weather-game-card:active {
+  -webkit-transform: scale(0.98);
+  transform: scale(0.98);
+}
+
+/* Disable pull-to-refresh on iOS */
+ion-content {
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Smoother animations for modals */
+ion-modal {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

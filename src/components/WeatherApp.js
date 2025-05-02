@@ -1,12 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloudSun, faSearch, faSpinner, faHeart, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
+import { 
+  IonHeader, 
+  IonToolbar, 
+  IonTitle, 
+  IonContent,
+  IonSearchbar,
+  IonButton,
+  IonIcon,
+  IonCard,
+  IonCardContent,
+  IonRefresher,
+  IonRefresherContent,
+  IonToggle,
+  IonItem,
+  IonLabel,
+  IonToast,
+  IonSpinner,
+  IonAlert
+} from '@ionic/react';
+import { Geolocation } from '@capacitor/geolocation';
+import { location } from 'ionicons/icons';
 import WindWarning from './WindWarning';
 import RainStatus from './RainStatus';
 import LocalTime from './LocalTime';
 import WeatherChart from './WeatherChart';
-import WeatherGames from './WeatherGames';
 import WeatherActivities from './WeatherActivities';
+import WeatherGames from './WeatherGames';
 import AuthModal from './AuthModal';
 import FavoritesModal from './FavoritesModal';
 import CurrentWeather from './CurrentWeather';
@@ -14,67 +36,69 @@ import { weatherService } from '../services/weatherService';
 import { getWeatherEffect } from '../utils/weatherEffects';
 import '../styles/Weather.css';
 import '../styles/WeatherInfo.css';
+import '../styles/TouchInteractions.css';
 
 const celsiusToFahrenheit = (celsius) => (celsius * 9/5) + 32;
 
 const WeatherApp = () => {
-  const [locationLoading, setLocationLoading] = useState(false);
+  const history = useHistory();
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
   const [forecastData, setForecastData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
+  const [locationError, setLocationError] = useState(null);
+  const [isCelsius, setIsCelsius] = useState(true);
   const [showAuth, setShowAuth] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [user, setUser] = useState(null);
-  const [isCelsius, setIsCelsius] = useState(true);
 
-  const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser');
-      return;
-    }
-
-    setLocationLoading(true);
-    setError('');
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const response = await weatherService.getCurrentWeather({ lat: latitude, lon: longitude });
-          
-          // Set the city name from the API response
-          setCity(response.city);
-          
-          const weatherData = {
-            ...response,
-            temp: isCelsius ? response.temperature : celsiusToFahrenheit(response.temperature),
-            feelsLike: isCelsius ? response.feelsLike : celsiusToFahrenheit(response.feelsLike),
-            tempC: response.temperature,
-            tempF: celsiusToFahrenheit(response.temperature),
-            feelsLikeC: response.feelsLike,
-            feelsLikeF: celsiusToFahrenheit(response.feelsLike)
-          };
-
-          // Fetch forecast data
-          const forecast = await weatherService.getForecast({ lat: latitude, lon: longitude });
-          setForecastData(forecast);
-
-          setWeather(weatherData);
-          updateWeatherBackground(response.condition);
-        } catch (err) {
-          setError('Failed to fetch weather data for your location');
-        } finally {
-          setLocationLoading(false);
-        }
-      },
-      (error) => {
-        setError('Unable to retrieve your location. ' + error.message);
-        setLocationLoading(false);
+  const requestLocationPermission = async () => {
+    try {
+      const permissionStatus = await Geolocation.checkPermissions();
+      
+      if (permissionStatus.location === 'prompt') {
+        setShowLocationPrompt(true);
+      } else if (permissionStatus.location === 'granted') {
+        await getCurrentLocationWeather();
       }
-    );
+    } catch (err) {
+      setLocationError('Unable to check location permissions');
+    }
   };
+
+  const getCurrentLocationWeather = async () => {
+    try {
+      setLoading(true);
+      const position = await Geolocation.getCurrentPosition();
+      const { latitude, longitude } = position.coords;
+      
+      const weatherData = await weatherService.getWeatherByCoords(latitude, longitude);
+      setWeather(weatherData);
+      setLoading(false);
+    } catch (err) {
+      setLocationError('Unable to get current location weather');
+      setLoading(false);
+    }
+  };
+
+  const handleLocationPrompt = async (allowed) => {
+    setShowLocationPrompt(false);
+    if (allowed) {
+      try {
+        await Geolocation.requestPermissions();
+        await getCurrentLocationWeather();
+      } catch (err) {
+        setLocationError('Location permission denied');
+      }
+    }
+  };
+
+  useEffect(() => {
+    requestLocationPermission();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -128,136 +152,215 @@ const WeatherApp = () => {
     }
   };
 
-  return (
-    <div className="weather-app">
-      <div id="weather-background" className="weather-background">
-        <div className="weather-effect"></div>
-      </div>
-      
-      <div className="container">
-        <header className="app-header">
-          <h1><FontAwesomeIcon icon={faCloudSun} /> Weather Forecast</h1>
-          <p className="subtitle">Real-time weather updates for any city</p>
-          <div className="unit-toggle">
-            <button 
-              className={`toggle-btn ${isCelsius ? 'active' : ''}`}
-              onClick={() => {
-                setIsCelsius(true);
-                if (weather) {
-                  setWeather({
-                    ...weather,
-                    temp: weather.tempC,
-                    feelsLike: weather.feelsLikeC
-                  });
-                }
-              }}
-            >
-              °C
-            </button>
-            <button 
-              className={`toggle-btn ${!isCelsius ? 'active' : ''}`}
-              onClick={() => {
-                setIsCelsius(false);
-                if (weather) {
-                  setWeather({
-                    ...weather,
-                    temp: weather.tempF,
-                    feelsLike: weather.feelsLikeF
-                  });
-                }
-              }}
-            >
-              °F
-            </button>
-          </div>
-          
-          <div className="auth-section">
-            {!user ? (
-              <div className="auth-buttons">
-                <button onClick={() => setShowAuth(true)} className="auth-btn">
-                  Login / Sign Up
-                </button>
-              </div>
-            ) : (
-              <div className="user-profile">
-                <span>{user.email}</span>
-                <button onClick={() => setShowFavorites(true)} className="profile-btn">
-                  <FontAwesomeIcon icon={faHeart} />
-                </button>
-              </div>
-            )}
-          </div>
-        </header>
+  const handleSearch = async () => {
+    if (!city.trim()) return;
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const currentData = await weatherService.getCurrentWeather(city);
+      const tempC = currentData.temp;
+      const tempF = (tempC * 9/5) + 32;
+      const feelsLikeC = currentData.feelsLike;
+      const feelsLikeF = (feelsLikeC * 9/5) + 32;
 
-        <form onSubmit={handleSubmit} className="search-form">
-          <div className="input-group">
-            <input
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="Enter city name"
-              required
-              className="city-input"
-            />
-            <button type="submit" className="search-button">
+      const weatherData = {
+        ...currentData,
+        tempC,
+        tempF,
+        feelsLikeC,
+        feelsLikeF,
+        temp: isCelsius ? tempC : tempF,
+        feelsLike: isCelsius ? feelsLikeC : feelsLikeF
+      };
+      
+      setWeather(weatherData);
+      const forecast = await weatherService.getForecast(city);
+      setForecastData(forecast);
+    } catch (err) {
+      setError(err.message || 'Failed to fetch weather data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGetLocation = () => {
+    setLocationLoading(true);
+    setError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const currentData = await weatherService.getCurrentWeather({ lat: latitude, lon: longitude });
+          
+          setCity(currentData.city);
+          
+          const tempC = currentData.temp;
+          const tempF = (tempC * 9/5) + 32;
+          const feelsLikeC = currentData.feelsLike;
+          const feelsLikeF = (feelsLikeC * 9/5) + 32;
+
+          const weatherData = {
+            ...currentData,
+            tempC,
+            tempF,
+            feelsLikeC,
+            feelsLikeF,
+            temp: isCelsius ? tempC : tempF,
+            feelsLike: isCelsius ? feelsLikeC : feelsLikeF
+          };
+          
+          setWeather(weatherData);
+          const forecast = await weatherService.getForecast({ lat: latitude, lon: longitude });
+          setForecastData(forecast);
+        } catch (err) {
+          setError(err.message || 'Failed to fetch weather data');
+        } finally {
+          setLocationLoading(false);
+        }
+      },
+      (err) => {
+        setError('Failed to get location. Please enable location services.');
+        setLocationLoading(false);
+      }
+    );
+  };
+
+  const doRefresh = async (event) => {
+    if (weather) {
+      await handleSearch();
+    }
+    event.detail.complete();
+  };
+
+  return (
+    <>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>
+            <FontAwesomeIcon icon={faCloudSun} /> Weather Forecast
+          </IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      
+      <IonContent>
+        <IonAlert
+          isOpen={showLocationPrompt}
+          onDidDismiss={() => setShowLocationPrompt(false)}
+          header="Location Access"
+          message="Would you like to share your location to get local weather updates?"
+          buttons={[
+            {
+              text: 'No Thanks',
+              role: 'cancel',
+              handler: () => handleLocationPrompt(false)
+            },
+            {
+              text: 'Allow',
+              handler: () => handleLocationPrompt(true)
+            }
+          ]}
+        />
+        <IonToast
+          isOpen={!!locationError}
+          message={locationError}
+          duration={3000}
+          onDidDismiss={() => setLocationError(null)}
+          position="top"
+          color="danger"
+        />
+        <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher>
+
+        <div className="ion-padding">
+          <IonSearchbar
+            value={city}
+            onIonChange={(e) => setCity(e.detail.value)}
+            placeholder="Enter city name"
+            className="ion-margin-bottom"
+          />
+          
+          <div className="ion-margin-bottom ion-text-center">
+            <IonButton expand="block" onClick={handleSearch}>
               {loading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
-                <><FontAwesomeIcon icon={faSearch} /> Get Weather</>
+                <>
+                  <FontAwesomeIcon icon={faSearch} /> Search Weather
+                </>
               )}
-            </button>
-            <button 
-              type="button" 
-              className="location-button" 
-              onClick={getCurrentLocation}
-              disabled={locationLoading}
+            </IonButton>
+            <IonButton 
+              expand="block" 
+              fill="outline" 
+              onClick={() => history.push('/route-weather')}
+              className="ion-margin-top"
             >
               {locationLoading ? (
                 <FontAwesomeIcon icon={faSpinner} spin />
               ) : (
                 <>
-                  <FontAwesomeIcon icon={faLocationCrosshairs} /> Use My Location
+                  <FontAwesomeIcon icon={faLocationCrosshairs} /> Route Weather
                 </>
               )}
-            </button>
+            </IonButton>
           </div>
-        </form>
 
-        {error && <div className="error-message">{error}</div>}
+          {error && <div className="error-message">{error}</div>}
 
-        {weather && (
-          <main className="weather-info">
-            <div className="weather-main">
-              <CurrentWeather weather={weather} unit={isCelsius ? '°C' : '°F'} />
-              <LocalTime 
-                timestamp={weather.datetime}
-                timezone={weather.timezone}
-              />
-              <WeatherChart 
-                data={weather} 
-                forecastData={forecastData}
-                unit={isCelsius ? '°C' : '°F'} 
-              />
-              <WeatherActivities weather={weather} unit={isCelsius ? '°C' : '°F'} />
-              <WeatherGames weather={weather} unit={isCelsius ? '°C' : '°F'} />
-            </div>
-            <div className="weather-alerts">
-              <WindWarning 
-                windSpeed={weather.windSpeed * 2.237} // Convert m/s to mph
-                windGust={weather.windGust ? weather.windGust * 2.237 : 0} // Convert m/s to mph if available
-              />
-              <RainStatus 
-                condition={weather.condition}
-                rainAmount={weather.rain}
-              />
-            </div>
-          </main>
-        )}
-      </div>
+          {weather && (
+            <IonCard>
+              <IonCardContent>
+                <CurrentWeather weather={weather} unit={isCelsius ? '°C' : '°F'} />
+                <LocalTime 
+                  timestamp={weather.datetime}
+                  timezone={weather.timezone}
+                />
+                <WeatherChart 
+                  data={weather} 
+                  forecastData={forecastData}
+                  unit={isCelsius ? '°C' : '°F'} 
+                />
+                <WeatherActivities weather={weather} unit={isCelsius ? '°C' : '°F'} />
+                <WeatherGames weather={weather} unit={isCelsius ? '°C' : '°F'} />
+                <WindWarning 
+                  windSpeed={weather.windSpeed * 2.237} // Convert m/s to mph
+                  windGust={weather.windGust ? weather.windGust * 2.237 : 0} // Convert m/s to mph if available
+                />
+                <RainStatus 
+                  condition={weather.condition}
+                  rainAmount={weather.rain}
+                />
+              </IonCardContent>
+            </IonCard>
+          )}
+        </div>
+      </IonContent>
 
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} onLogin={setUser} />}
-      {showFavorites && <FavoritesModal onClose={() => setShowFavorites(false)} />}
-    </div>
+      {showAuth && (
+        <AuthModal 
+          onClose={() => setShowAuth(false)}
+          onLogin={(user) => {
+            setUser(user);
+            setShowAuth(false);
+          }}
+        />
+      )}
+
+      {showFavorites && (
+        <FavoritesModal
+          onClose={() => setShowFavorites(false)}
+          onSelectLocation={(loc) => {
+            setCity(loc);
+            setShowFavorites(false);
+            handleSearch();
+          }}
+          userEmail={user?.email}
+        />
+      )}
+    </>
   );
 };
 

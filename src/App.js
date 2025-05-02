@@ -1,15 +1,37 @@
 import React from 'react';
+import { IonApp, IonContent, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import { IonReactRouter } from '@ionic/react-router';
+import { Route } from 'react-router-dom';
+import WeatherApp from './components/WeatherApp';
+import RouteWeather from './components/RouteWeather';
 import './App.css';
 import './styles/WeatherApp.css';
 import './styles/Modal.css';
 import './styles/WeatherTrends.css';
-import WeatherApp from './components/WeatherApp';
+import '@ionic/react/css/core.css';
+import '@ionic/react/css/normalize.css';
+import '@ionic/react/css/structure.css';
+import '@ionic/react/css/typography.css';
+import '@ionic/react/css/padding.css';
+import '@ionic/react/css/float-elements.css';
+import '@ionic/react/css/text-alignment.css';
+import '@ionic/react/css/text-transformation.css';
+import '@ionic/react/css/flex-utils.css';
+import '@ionic/react/css/display.css';
+import './theme/variables.css';
+
+setupIonicReact();
 
 function App() {
   return (
-    <div className="App">
-      <WeatherApp />
-    </div>
+    <IonApp>
+      <IonReactRouter>
+      <IonRouterOutlet>
+        <Route exact path="/" component={WeatherApp} />
+        <Route exact path="/route-weather" component={RouteWeather} />
+      </IonRouterOutlet>
+      </IonReactRouter>
+    </IonApp>
   );
 }
 
