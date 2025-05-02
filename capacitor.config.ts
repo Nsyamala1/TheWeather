@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.naveensyamala.weatherapp',
-  appName: 'Weather App',
+  appName: 'AI Weather',
   webDir: 'build',
   server: {
     androidScheme: 'https',

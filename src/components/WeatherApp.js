@@ -285,7 +285,7 @@ const WeatherApp = () => {
           <div className="ion-margin-bottom ion-text-center">
             <IonButton expand="block" onClick={handleSearch}>
               {loading ? (
-                <FontAwesomeIcon icon={faSpinner} spin />
+                <FontAwesomeIcon icon={faSpinner} />
               ) : (
                 <>
                   <FontAwesomeIcon icon={faSearch} /> Search Weather
@@ -299,7 +299,7 @@ const WeatherApp = () => {
               className="ion-margin-top"
             >
               {locationLoading ? (
-                <FontAwesomeIcon icon={faSpinner} spin />
+                <FontAwesomeIcon icon={faSpinner} />
               ) : (
                 <>
                   <FontAwesomeIcon icon={faLocationCrosshairs} /> Route Weather
