@@ -94,6 +94,8 @@ export const weatherService = {
                     acc[date] = {
                         date,
                         temps: [],
+                        minTemps: [],
+                        maxTemps: [],
                         conditions: [],
                         humidity: [],
                         windSpeed: [],
@@ -102,6 +104,8 @@ export const weatherService = {
                 }
 
                 acc[date].temps.push(item.main.temp);
+                acc[date].minTemps.push(item.main.temp_min);
+                acc[date].maxTemps.push(item.main.temp_max);
                 acc[date].conditions.push(item.weather[0].main);
                 acc[date].humidity.push(item.main.humidity);
                 acc[date].windSpeed.push(item.wind.speed);
@@ -113,7 +117,9 @@ export const weatherService = {
             // Calculate daily averages
             return Object.values(processedData).map(day => ({
                 date: day.date,
-                temp: day.temps.reduce((a, b) => a + b) / day.temps.length,
+                temperature: day.temps.reduce((a, b) => a + b) / day.temps.length,
+                tempMin: Math.min(...day.minTemps),
+                tempMax: Math.max(...day.maxTemps),
                 condition: day.conditions[Math.floor(day.conditions.length / 2)],
                 humidity: day.humidity.reduce((a, b) => a + b) / day.humidity.length,
                 windSpeed: day.windSpeed.reduce((a, b) => a + b) / day.windSpeed.length,

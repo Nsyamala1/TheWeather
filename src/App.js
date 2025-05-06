@@ -1,7 +1,7 @@
 import React from 'react';
 import { IonApp, IonContent, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { Route } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import WeatherApp from './components/WeatherApp';
 import RouteWeather from './components/RouteWeather';
 import './App.css';
@@ -26,10 +26,15 @@ function App() {
   return (
     <IonApp>
       <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path="/" component={WeatherApp} />
-        <Route exact path="/route-weather" component={RouteWeather} />
-      </IonRouterOutlet>
+        <IonRouterOutlet>
+          <Switch>
+            <Route exact path="/home" component={WeatherApp} />
+            <Route exact path="/route-weather" component={RouteWeather} />
+            <Route exact path="/">
+              <Redirect to="/home" />
+            </Route>
+          </Switch>
+        </IonRouterOutlet>
       </IonReactRouter>
     </IonApp>
   );

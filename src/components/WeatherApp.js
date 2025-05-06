@@ -59,27 +59,63 @@ const WeatherApp = () => {
     try {
       const permissionStatus = await Geolocation.checkPermissions();
       
-      if (permissionStatus.location === 'prompt') {
+      if (permissionStatus.location === 'prompt' || permissionStatus.location === 'prompt-with-rationale') {
         setShowLocationPrompt(true);
       } else if (permissionStatus.location === 'granted') {
         await getCurrentLocationWeather();
+      } else if (permissionStatus.location === 'denied') {
+        setLocationError('Location access is denied. Please enable location access in your device settings.');
       }
     } catch (err) {
-      setLocationError('Unable to check location permissions');
+      console.error('Location permission error:', err);
+      setLocationError('Unable to check location permissions. ' + err.message);
     }
   };
 
   const getCurrentLocationWeather = async () => {
     try {
       setLoading(true);
-      const position = await Geolocation.getCurrentPosition();
+      const position = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      });
       const { latitude, longitude } = position.coords;
       
-      const weatherData = await weatherService.getWeatherByCoords(latitude, longitude);
+      const [currentData, forecast] = await Promise.all([
+        weatherService.getCurrentWeather({ lat: latitude, lon: longitude }),
+        weatherService.getForecast({ lat: latitude, lon: longitude })
+      ]);
+
+      const tempC = currentData.temp;
+      const tempF = (tempC * 9/5) + 32;
+      const feelsLikeC = currentData.feelsLike;
+      const feelsLikeF = (feelsLikeC * 9/5) + 32;
+
+      const weatherData = {
+        ...currentData,
+        tempC,
+        tempF,
+        feelsLikeC,
+        feelsLikeF,
+        temp: isCelsius ? tempC : tempF,
+        feelsLike: isCelsius ? feelsLikeC : feelsLikeF
+      };
+      
       setWeather(weatherData);
+      setForecastData(forecast);
       setLoading(false);
     } catch (err) {
-      setLocationError('Unable to get current location weather');
+      console.error('Get location error:', err);
+      if (err.code === 1) {
+        setLocationError('Location permission denied. Please enable location access in your device settings.');
+      } else if (err.code === 2) {
+        setLocationError('Location is not available. Please check your device settings.');
+      } else if (err.code === 3) {
+        setLocationError('Location request timed out. Please try again.');
+      } else {
+        setLocationError('Unable to get current location: ' + err.message);
+      }
       setLoading(false);
     }
   };
@@ -158,7 +194,11 @@ const WeatherApp = () => {
     setError(null);
     
     try {
-      const currentData = await weatherService.getCurrentWeather(city);
+      const [currentData, forecast] = await Promise.all([
+        weatherService.getCurrentWeather(city),
+        weatherService.getForecast(city)
+      ]);
+
       const tempC = currentData.temp;
       const tempF = (tempC * 9/5) + 32;
       const feelsLikeC = currentData.feelsLike;
@@ -175,7 +215,6 @@ const WeatherApp = () => {
       };
       
       setWeather(weatherData);
-      const forecast = await weatherService.getForecast(city);
       setForecastData(forecast);
     } catch (err) {
       setError(err.message || 'Failed to fetch weather data');
@@ -237,9 +276,9 @@ const WeatherApp = () => {
   return (
     <>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar color="primary">
           <IonTitle>
-            <FontAwesomeIcon icon={faCloudSun} /> Weather Forecast
+            <FontAwesomeIcon icon={faCloudSun} style={{ color: 'white' }} /> Weather Forecast
           </IonTitle>
         </IonToolbar>
       </IonHeader>

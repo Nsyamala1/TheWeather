@@ -80,7 +80,7 @@ const WeatherChart = ({ data, forecastData, unit }) => {
     datasets: [
       {
         label: `Max Temperature (${unit})`,
-        data: forecastData?.map(f => unit === '°F' ? f.tempMax * 9/5 + 32 : f.tempMax) || [],
+        data: forecastData?.map(f => unit === '°F' ? (f.tempMax * 9/5 + 32).toFixed(1) : f.tempMax.toFixed(1)) || [],
         borderColor: '#dc2626',
         backgroundColor: 'rgba(220, 38, 38, 0.1)',
         fill: false,
@@ -88,7 +88,7 @@ const WeatherChart = ({ data, forecastData, unit }) => {
       },
       {
         label: `Average Temperature (${unit})`,
-        data: forecastData?.map(f => unit === '°F' ? f.temperature * 9/5 + 32 : f.temperature) || [],
+        data: forecastData?.map(f => unit === '°F' ? (f.temperature * 9/5 + 32).toFixed(1) : f.temperature.toFixed(1)) || [],
         borderColor: '#2563eb',
         backgroundColor: 'rgba(37, 99, 235, 0.1)',
         fill: true,
@@ -96,7 +96,7 @@ const WeatherChart = ({ data, forecastData, unit }) => {
       },
       {
         label: `Min Temperature (${unit})`,
-        data: forecastData?.map(f => unit === '°F' ? f.tempMin * 9/5 + 32 : f.tempMin) || [],
+        data: forecastData?.map(f => unit === '°F' ? (f.tempMin * 9/5 + 32).toFixed(1) : f.tempMin.toFixed(1)) || [],
         borderColor: '#0891b2',
         backgroundColor: 'rgba(8, 145, 178, 0.1)',
         fill: false,
