@@ -123,11 +123,72 @@
   border-radius: 0.5rem;
 }
 
-.weather-info {
-  background: rgba(255, 255, 255, 0.9);
+.weather-content {
+  --background: #f8fafc;
+  --padding-bottom: 2rem;
+}
+
+.weather-content::part(background) {
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+}
+
+ion-content::part(scroll) {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 2rem);
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+}
+
+.weather-dashboard {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: transparent;
+  min-height: 100vh;
+}
+
+.weather-main-card {
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 1rem;
-  padding: 2rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.weather-chart-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.weather-activities-section {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.weather-activities-card,
+.weather-games-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.weather-alerts-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .weather-dashboard {
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+
+  .weather-activities-section {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 .charts-container {

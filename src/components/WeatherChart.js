@@ -30,29 +30,57 @@ const WeatherChart = ({ data, forecastData, unit }) => {
     plugins: {
       legend: {
         position: 'top',
+        align: 'start',
         labels: {
           usePointStyle: true,
-          padding: 20,
+          padding: 15,
+          boxWidth: 6,
+          boxHeight: 6,
           font: {
-            size: 12,
+            size: 11,
             family: "'Inter', sans-serif",
+            weight: '500',
           },
         },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        titleColor: '#1f2937',
+        bodyColor: '#1f2937',
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+        borderWidth: 1,
+        padding: 10,
+        bodyFont: {
+          size: 12,
+          family: "'Inter', sans-serif",
+        },
+        titleFont: {
+          size: 12,
+          family: "'Inter', sans-serif",
+          weight: '600',
+        },
+        displayColors: false,
       },
     },
     scales: {
       y: {
         beginAtZero: false,
         grid: {
-          color: 'rgba(0, 0, 0, 0.06)',
+          color: 'rgba(0, 0, 0, 0.04)',
           drawBorder: false,
+          lineWidth: 1,
+        },
+        border: {
+          display: false,
         },
         ticks: {
           font: {
-            size: 12,
+            size: 11,
             family: "'Inter', sans-serif",
+            weight: '500',
           },
-          padding: 10,
+          padding: 8,
+          color: '#6b7280',
         },
       },
       x: {
@@ -60,12 +88,18 @@ const WeatherChart = ({ data, forecastData, unit }) => {
           display: false,
           drawBorder: false,
         },
+        border: {
+          display: false,
+        },
         ticks: {
           font: {
-            size: 12,
+            size: 11,
             family: "'Inter', sans-serif",
+            weight: '500',
           },
-          padding: 10,
+          padding: 8,
+          color: '#6b7280',
+          maxRotation: 0,
         },
       },
     },
@@ -82,7 +116,7 @@ const WeatherChart = ({ data, forecastData, unit }) => {
         label: `Max Temperature (${unit})`,
         data: forecastData?.map(f => unit === '°F' ? (f.tempMax * 9/5 + 32).toFixed(1) : f.tempMax.toFixed(1)) || [],
         borderColor: '#dc2626',
-        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+        backgroundColor: 'rgba(220, 38, 38, 0.08)',
         fill: false,
         tension: 0.4,
       },
@@ -90,7 +124,7 @@ const WeatherChart = ({ data, forecastData, unit }) => {
         label: `Average Temperature (${unit})`,
         data: forecastData?.map(f => unit === '°F' ? (f.temperature * 9/5 + 32).toFixed(1) : f.temperature.toFixed(1)) || [],
         borderColor: '#2563eb',
-        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+        backgroundColor: 'rgba(37, 99, 235, 0.08)',
         fill: true,
         tension: 0.4,
       },
@@ -98,7 +132,7 @@ const WeatherChart = ({ data, forecastData, unit }) => {
         label: `Min Temperature (${unit})`,
         data: forecastData?.map(f => unit === '°F' ? (f.tempMin * 9/5 + 32).toFixed(1) : f.tempMin.toFixed(1)) || [],
         borderColor: '#0891b2',
-        backgroundColor: 'rgba(8, 145, 178, 0.1)',
+        backgroundColor: 'rgba(8, 145, 178, 0.08)',
         fill: false,
         tension: 0.4,
       }
@@ -111,7 +145,7 @@ const WeatherChart = ({ data, forecastData, unit }) => {
       label: 'Humidity (%)',
       data: forecastData?.map(f => f.humidity) || [],
       borderColor: '#10b981',
-      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      backgroundColor: 'rgba(16, 185, 129, 0.08)',
       fill: true,
       tension: 0.4,
     }],

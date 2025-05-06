@@ -35,7 +35,6 @@ import CurrentWeather from './CurrentWeather';
 import { weatherService } from '../services/weatherService';
 import { getWeatherEffect } from '../utils/weatherEffects';
 import '../styles/Weather.css';
-import '../styles/WeatherInfo.css';
 import '../styles/TouchInteractions.css';
 
 const celsiusToFahrenheit = (celsius) => (celsius * 9/5) + 32;
@@ -104,6 +103,7 @@ const WeatherApp = () => {
       
       setWeather(weatherData);
       setForecastData(forecast);
+      setCity(currentData.city); // Auto-populate the city input
       setLoading(false);
     } catch (err) {
       console.error('Get location error:', err);
@@ -283,7 +283,7 @@ const WeatherApp = () => {
         </IonToolbar>
       </IonHeader>
       
-      <IonContent>
+      <IonContent className="weather-content" scrollY={true}>
         <IonAlert
           isOpen={showLocationPrompt}
           onDidDismiss={() => setShowLocationPrompt(false)}
@@ -317,8 +317,12 @@ const WeatherApp = () => {
           <IonSearchbar
             value={city}
             onIonChange={(e) => setCity(e.detail.value)}
-            placeholder="Enter city name"
+            placeholder={loading ? 'Loading...' : 'Enter city name'}
             className="ion-margin-bottom"
+            disabled={loading}
+            clearInput={true}
+            debounce={300}
+            showCancelButton="never"
           />
           
           <div className="ion-margin-bottom ion-text-center">
@@ -350,30 +354,54 @@ const WeatherApp = () => {
           {error && <div className="error-message">{error}</div>}
 
           {weather && (
-            <IonCard>
-              <IonCardContent>
-                <CurrentWeather weather={weather} unit={isCelsius ? '°C' : '°F'} />
-                <LocalTime 
-                  timestamp={weather.datetime}
-                  timezone={weather.timezone}
-                />
-                <WeatherChart 
-                  data={weather} 
-                  forecastData={forecastData}
-                  unit={isCelsius ? '°C' : '°F'} 
-                />
-                <WeatherActivities weather={weather} unit={isCelsius ? '°C' : '°F'} />
-                <WeatherGames weather={weather} unit={isCelsius ? '°C' : '°F'} />
-                <WindWarning 
-                  windSpeed={weather.windSpeed * 2.237} // Convert m/s to mph
-                  windGust={weather.windGust ? weather.windGust * 2.237 : 0} // Convert m/s to mph if available
-                />
-                <RainStatus 
-                  condition={weather.condition}
-                  rainAmount={weather.rain}
-                />
-              </IonCardContent>
-            </IonCard>
+            <div className="weather-dashboard">
+              <IonCard className="weather-main-card">
+                <IonCardContent>
+                  <CurrentWeather weather={weather} unit={isCelsius ? '°C' : '°F'} />
+                  <LocalTime 
+                    timestamp={weather.datetime}
+                    timezone={weather.timezone}
+                  />
+                </IonCardContent>
+              </IonCard>
+
+              <IonCard className="weather-chart-card">
+                <IonCardContent>
+                  <WeatherChart 
+                    data={weather} 
+                    forecastData={forecastData}
+                    unit={isCelsius ? '°C' : '°F'} 
+                  />
+                </IonCardContent>
+              </IonCard>
+
+              <div className="weather-activities-section">
+                <IonCard className="weather-activities-card">
+                  <IonCardContent>
+                    <WeatherActivities weather={weather} unit={isCelsius ? '°C' : '°F'} />
+                  </IonCardContent>
+                </IonCard>
+                
+                <IonCard className="weather-games-card">
+                  <IonCardContent>
+                    <WeatherGames weather={weather} unit={isCelsius ? '°C' : '°F'} />
+                  </IonCardContent>
+                </IonCard>
+              </div>
+
+              <IonCard className="weather-alerts-section">
+                <IonCardContent>
+                  <WindWarning 
+                    windSpeed={weather.windSpeed * 2.237}
+                    windGust={weather.windGust ? weather.windGust * 2.237 : 0}
+                  />
+                  <RainStatus 
+                    condition={weather.condition}
+                    rainAmount={weather.rain}
+                  />
+                </IonCardContent>
+              </IonCard>
+            </div>
           )}
         </div>
       </IonContent>

@@ -5,10 +5,12 @@ import {
   faTint, 
   faCloud, 
   faWind, 
-  faInfoCircle, 
-  faMapMarkerAlt 
+  faEye, 
+  faMapMarkerAlt,
+  faCloudSun,
+  faLocationDot
 } from '@fortawesome/free-solid-svg-icons';
-import '../styles/Weather.css';
+import '../styles/CurrentWeather.css';
 
 const CurrentWeather = ({ weather, unit }) => {
   if (!weather) return null;
@@ -28,58 +30,70 @@ const CurrentWeather = ({ weather, unit }) => {
   } = weather;
 
   return (
-    <div className="weather-card">
-      <div className="weather-info">
-        <div className="location-row">
-          <div className="location">
-            <FontAwesomeIcon icon={faMapMarkerAlt} />
-            <span>Location: {city}</span>
+    <div className="weather-info">
+      <div className="weather-main">
+        <div className="location">
+          <FontAwesomeIcon icon={faLocationDot} />
+          {city}
+        </div>
+        
+        <div className="temperature-display">
+          {temperature.toFixed(1)}{unit}
+        </div>
+        
+        <div className="feels-like">
+          <FontAwesomeIcon icon={faThermometerHalf} />
+          Feels like {feelsLike.toFixed(1)}{unit}
+        </div>
+      </div>
+
+      <div className="weather-metrics-grid">
+        <div className="metric-item">
+          <div className="metric-icon">
+            <FontAwesomeIcon icon={faCloudSun} />
           </div>
+          <div className="metric-label">Condition</div>
+          <div className="metric-value">{condition}</div>
         </div>
 
-        <div className="main-temp">
-          <div className="temperature">
-            <FontAwesomeIcon icon={faThermometerHalf} />
-            <span>Temperature: {temperature.toFixed(1)}{unit}</span>
-          </div>
-          <div className="feels-like">
-            <FontAwesomeIcon icon={faThermometerHalf} />
-            <span>Feels Like: {feelsLike.toFixed(1)}{unit}</span>
-          </div>
-        </div>
-
-        <div className="weather-details">
-          <div className="condition">
-            <FontAwesomeIcon icon={faCloud} />
-            <span>Condition: {condition}</span>
-          </div>
-          <div className="humidity">
+        <div className="metric-item">
+          <div className="metric-icon">
             <FontAwesomeIcon icon={faTint} />
-            <span>Humidity: {humidity}%</span>
           </div>
-          <div className="wind-speed">
-            <FontAwesomeIcon icon={faWind} />
-            <span>Wind Speed: {windSpeed} km/h</span>
-          </div>
-          <div className="visibility">
-            <FontAwesomeIcon icon={faInfoCircle} />
-            <span>Visibility: {visibility} km</span>
-          </div>
-          <div className="cloud-cover">
-            <FontAwesomeIcon icon={faCloud} />
-            <span>Cloud Cover: {cloudCover}%</span>
-          </div>
+          <div className="metric-label">Humidity</div>
+          <div className="metric-value">{humidity}%</div>
         </div>
 
-        <div className="footer">
-          <div className="description">
-            <FontAwesomeIcon icon={faInfoCircle} />
-            <span>Description: {description}</span>
+        <div className="metric-item">
+          <div className="metric-icon">
+            <FontAwesomeIcon icon={faWind} />
           </div>
-          <div className="last-updated">
-            <FontAwesomeIcon icon={faInfoCircle} />
-            <span>Last Updated: {new Date(datetime).toLocaleString()}</span>
+          <div className="metric-label">Wind Speed</div>
+          <div className="metric-value">{windSpeed} km/h</div>
+        </div>
+
+        <div className="metric-item">
+          <div className="metric-icon">
+            <FontAwesomeIcon icon={faEye} />
           </div>
+          <div className="metric-label">Visibility</div>
+          <div className="metric-value">{visibility} km</div>
+        </div>
+
+        <div className="metric-item">
+          <div className="metric-icon">
+            <FontAwesomeIcon icon={faCloud} />
+          </div>
+          <div className="metric-label">Cloud Cover</div>
+          <div className="metric-value">{cloudCover}%</div>
+        </div>
+
+        <div className="metric-item">
+          <div className="metric-icon">
+            <FontAwesomeIcon icon={faCloudSun} />
+          </div>
+          <div className="metric-label">Weather</div>
+          <div className="metric-value">{description}</div>
         </div>
       </div>
     </div>
